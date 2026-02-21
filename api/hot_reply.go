@@ -13,7 +13,7 @@ import (
 	ent "github.com/XiaoMengXinX/CoolapkApi-Go/entities"
 )
 
-func FeedHandler(w http.ResponseWriter, r *http.Request) {
+func HotReplyHandler(w http.ResponseWriter, r *http.Request) {
 	authToken := r.Header.Get("X-Internal-Auth")
 	expectedToken := os.Getenv("INTERNAL_AUTH_TOKEN")
 
@@ -35,19 +35,29 @@ func FeedHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	pageStr := r.URL.Query().Get("page")
+	page := 1
+	if pageStr != "" {
+		page, err = strconv.Atoi(pageStr)
+		if err != nil {
+			http.Error(w, "Query parameter 'page' must be a valid integer", http.StatusBadRequest)
+			return
+		}
+	}
+
 	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
 	defer cancel()
 
 	c := coolapk.New()
-	var feedDetail *ent.FeedDetail
-	feedDetail, err = c.GetFeedDetailWithCtx(id, ctx)
+	var replyList *ent.ReplyList
+	replyList, err = c.GetHotReplyListWithCtx(id, page, ctx)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			log.Printf("Request timed out for id %d: %v", id, err)
 			http.Error(w, "The request to Coolapk API timed out", http.StatusGatewayTimeout)
 			return
 		}
-		log.Printf("Error calling GetFeedDetailWithCtx for id %d: %v", id, err)
+		log.Printf("Error calling GetHotReplyListWithCtx for id %d: %v", id, err)
 		http.Error(w, "Failed to fetch data from Coolapk API", http.StatusInternalServerError)
 		return
 	}
@@ -55,10 +65,10 @@ func FeedHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("Cache-Control", "s-maxage=600, stale-while-revalidate=0")
 
-	statusCode := feedDetail.StatusCode
+	statusCode := replyList.StatusCode
 	if statusCode == 0 {
 		statusCode = http.StatusOK
 	}
 	w.WriteHeader(statusCode)
-	_, _ = w.Write([]byte(feedDetail.Response))
+	_, _ = w.Write([]byte(replyList.Response))
 }
