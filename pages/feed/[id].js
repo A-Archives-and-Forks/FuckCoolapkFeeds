@@ -144,7 +144,7 @@ const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
                     isMarkdownEnabled={isMarkdownEnabled}
                 />
             </div>
-            {/* <AdBanner adClient={adClient} adSlot={adSlot} /> */}
+            <AdBanner adClient={adClient} adSlot={adSlot} />
             <div ref={replyRef} style={replyContainerStyle}>
                 {replyVisible && (
                     <>
@@ -200,7 +200,7 @@ const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
 };
 
 const replyContainerStyle = {
-    marginTop: '30px',
+    marginTop: '20px',
     paddingTop: '0',
     minHeight: '80px',
 };
