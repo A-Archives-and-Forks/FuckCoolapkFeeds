@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { processHtmlLinks } from '../../lib/linkProcessor';
 import { getMarkdownRenderer, detectMarkdown } from '../../lib/markdownProcessor';
 import { proxyImage } from '../../lib/imageProxy';
@@ -15,6 +15,9 @@ import { styles } from '../../styles/feedStyles';
 
 const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
     const [isBarVisible, setIsBarVisible] = useState(true);
+    const [replyVisible, setReplyVisible] = useState(false);
+    const replyRef = useRef(null);
+    const iframeRef = useRef(null);
     const [lightboxImages, setLightboxImages] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [showLightbox, setShowLightbox] = useState(false);
@@ -22,6 +25,7 @@ const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
     const [isAndroid, setIsAndroid] = useState(false);
     const [formattedDate, setFormattedDate] = useState('');
     const [isMarkdownEnabled, setIsMarkdownEnabled] = useState(false);
+    const [isReplyLoading, setIsReplyLoading] = useState(true);
     const md = getMarkdownRenderer();
 
     useEffect(() => {
@@ -40,6 +44,51 @@ const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
         }
         return () => window.removeEventListener('resize', checkIsPC);
     }, [feed]);
+
+    useEffect(() => {
+        if (!replyRef.current) return;
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setReplyVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { rootMargin: '200px' }
+        );
+        observer.observe(replyRef.current);
+        return () => observer.disconnect();
+    }, []);
+
+    useEffect(() => {
+        // Listen for messages from the reply iframe via postMessage
+        const onMessage = (e) => {
+            if (e.data?.type === 'reply-height' && iframeRef.current) {
+                iframeRef.current.style.height = e.data.height + 'px';
+                setIsReplyLoading(false);
+            } else if (e.data?.type === 'image-click') {
+                // Trigger the parent's lightbox using the images and index from the iframe
+                handleImageClick(e.data.images, e.data.index);
+            }
+        };
+        window.addEventListener('message', onMessage);
+        return () => window.removeEventListener('message', onMessage);
+    }, []);
+
+    // Helper to sync theme to iframe
+    const syncThemeToIframe = () => {
+        if (iframeRef.current && iframeRef.current.contentWindow) {
+            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            iframeRef.current.contentWindow.postMessage({ type: 'theme-change', isDark }, '*');
+        }
+    };
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const handleChange = () => syncThemeToIframe();
+        mediaQuery.addEventListener('change', handleChange);
+        return () => mediaQuery.removeEventListener('change', handleChange);
+    }, []);
 
     const handleImageClick = (images, index) => {
         setLightboxImages(images);
@@ -95,7 +144,31 @@ const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
                     isMarkdownEnabled={isMarkdownEnabled}
                 />
             </div>
-            <AdBanner adClient={adClient} adSlot={adSlot} />
+            {/* <AdBanner adClient={adClient} adSlot={adSlot} /> */}
+            <div ref={replyRef} style={replyContainerStyle}>
+                {replyVisible && (
+                    <>
+                        {isReplyLoading && (
+                            <div className="comment-loader-container">
+                                <div className="comment-loader"></div>
+                                <span>加载热门评论中...</span>
+                            </div>
+                        )}
+                        <iframe
+                            ref={iframeRef}
+                            src={`/reply/${id}`}
+                            style={{ ...replyIframeStyle, display: isReplyLoading ? 'none' : 'block' }}
+                            scrolling="no"
+                            frameBorder="0"
+                            title="热门评论"
+                            onLoad={() => {
+                                // Sync theme on first load
+                                syncThemeToIframe();
+                            }}
+                        />
+                    </>
+                )}
+            </div>
             {isBarVisible && id && (
                 <div style={styles.floatingBarContainer}>
                     <div style={styles.floatingBar}>
@@ -124,6 +197,20 @@ const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
             )}
         </div>
     );
+};
+
+const replyContainerStyle = {
+    marginTop: '30px',
+    paddingTop: '0',
+    minHeight: '80px',
+};
+
+const replyIframeStyle = {
+    width: '100%',
+    border: 'none',
+    display: 'block',
+    minHeight: '200px',
+    overflow: 'hidden',
 };
 
 export async function getServerSideProps(context) {

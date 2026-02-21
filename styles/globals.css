@@ -23,7 +23,7 @@
   --ai-summary-disclaimer-color: #999;
   --ai-summary-separator: #e8e8e8;
   --product-card-border: rgba(0, 0, 0, 0.1);
-  
+
   /* Product rank colors - Light mode */
   --rank-color-1: #eb6058;
   --rank-color-2: #f19c39;
@@ -33,6 +33,17 @@
   --image-border: 1px solid #ddd;
   --icon-color: #999;
   --image-bg: #f5f5f5;
+
+  /* Reply section variables - Light mode */
+  --reply-bg: #f9f9f9;
+  --reply-text: #333333;
+  --reply-text-secondary: #aaaaaa;
+  --reply-border: #f0f0f0;
+  --reply-nested-bg: #f0f0f0;
+  --reply-link: #28a745;
+  --reply-heading: #333333;
+  --reply-row-to: #bbbbbb;
+  --reply-row-msg: #444444;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -44,7 +55,7 @@
     --ai-summary-disclaimer-color: #888;
     --ai-summary-separator: #333;
     --product-card-border: rgba(255, 255, 255, 0.1);
-    
+
     /* Product rank colors - Dark mode (softer, less saturated) */
     --rank-color-1: #d45a52;
     --rank-color-2: #d88a3a;
@@ -54,6 +65,17 @@
     --image-border: 1px solid #555;
     --icon-color: #666;
     --image-bg: #222;
+
+    /* Reply section variables - Dark mode */
+    --reply-bg: #1a1a1a;
+    --reply-text: #e0e0e0;
+    --reply-text-secondary: #888888;
+    --reply-border: #333333;
+    --reply-nested-bg: #252525;
+    --reply-link: #3dd56d;
+    --reply-heading: #e0e0e0;
+    --reply-row-to: #666666;
+    --reply-row-msg: #cccccc;
   }
 }
 
@@ -107,11 +129,33 @@ body.dark-mode {
   --ai-summary-content-color: #e0e0e0;
   --ai-summary-disclaimer-color: #888;
   --ai-summary-separator: #333;
+
+  /* Reply variables for manual dark mode class */
+  --reply-bg: #1a1a1a;
+  --reply-text: #e0e0e0;
+  --reply-text-secondary: #888888;
+  --reply-border: #333333;
+  --reply-nested-bg: #252525;
+  --reply-link: #3dd56d;
+  --reply-heading: #e0e0e0;
+  --reply-row-to: #666666;
+  --reply-row-msg: #cccccc;
 }
 
 body.light-mode {
   background-color: #f9f9f9;
   color: #333;
+
+  /* Reply variables for manual light mode class */
+  --reply-bg: #f9f9f9;
+  --reply-text: #333333;
+  --reply-text-secondary: #aaaaaa;
+  --reply-border: #f0f0f0;
+  --reply-nested-bg: #f0f0f0;
+  --reply-link: #28a745;
+  --reply-heading: #333333;
+  --reply-row-to: #bbbbbb;
+  --reply-row-msg: #444444;
 }
 
 .switch {
@@ -154,16 +198,16 @@ body.light-mode {
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-input:checked + .slider {
+input:checked+.slider {
   background-color: #28a745;
   color: white;
 }
 
-input:checked + .slider:hover {
+input:checked+.slider:hover {
   background-color: #218838;
 }
 
-input:focus + .slider {
+input:focus+.slider {
   box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
 }
 
@@ -273,7 +317,7 @@ body.dark-mode .markdown-content pre code.hljs {
 .markdown-content a {
   word-break: break-all;
   overflow-wrap: break-word;
-  color: #0366d6;
+  color: #28a745;
   text-decoration: none;
 }
 
@@ -283,68 +327,68 @@ body.dark-mode .markdown-content pre code.hljs {
 
 @media (prefers-color-scheme: dark) {
   .markdown-content a {
-    color: #58a6ff;
+    color: #3dd56d;
   }
 }
 
 body.dark-mode .markdown-content a {
-  color: #58a6ff;
+  color: #3dd56d;
 }
 
 /* Non-markdown link styles */
 a {
   word-break: break-all;
   overflow-wrap: break-word;
-  color: #0366d6;
+  color: #28a745;
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 a:hover {
-  color: #0056b3;
+  color: #1e7e34;
   text-decoration: underline;
 }
 
 a:visited {
-  color: #6f42c1;
+  color: #218838;
 }
 
 a:active {
-  color: #d73a49;
+  color: #155724;
 }
 
 @media (prefers-color-scheme: dark) {
   a {
-    color: #58a6ff;
+    color: #3dd56d;
   }
 
   a:hover {
-    color: #79c0ff;
+    color: #5ade82;
   }
 
   a:visited {
-    color: #bc8cff;
+    color: #3dd56d;
   }
 
   a:active {
-    color: #ff7b72;
+    color: #28a745;
   }
 }
 
 body.dark-mode a {
-  color: #58a6ff;
+  color: #3dd56d;
 }
 
 body.dark-mode a:hover {
-  color: #79c0ff;
+  color: #5ade82;
 }
 
 body.dark-mode a:visited {
-  color: #bc8cff;
+  color: #3dd56d;
 }
 
 body.dark-mode a:active {
-  color: #ff7b72;
+  color: #28a745;
 }
 
 .markdown-content p {
@@ -486,7 +530,7 @@ body.dark-mode .markdown-content table tr:hover {
   cursor: pointer;
 }
 
-.markdown-content .task-list-item input[type="checkbox"]:checked + label {
+.markdown-content .task-list-item input[type="checkbox"]:checked+label {
   text-decoration: line-through;
   color: #6c757d;
 }
@@ -522,6 +566,7 @@ body.dark-mode .markdown-content table tr:hover {
 
 /* Feed page dark mode overrides for inline styles */
 @media (prefers-color-scheme: dark) {
+
   /* Override container text color */
   div[style*="color: rgb(51, 51, 51)"],
   div[style*="color:#333"] {
@@ -564,12 +609,12 @@ body.dark-mode .markdown-content table tr:hover {
     background-color: #495057;
   }
 
-  input:checked + .slider {
+  input:checked+.slider {
     background-color: #28a745;
     color: white;
   }
 
-  input:checked + .slider:hover {
+  input:checked+.slider:hover {
     background-color: #218838;
   }
 }
@@ -611,7 +656,7 @@ body.dark-mode .markdown-content table tr:hover {
     width: 100px !important;
     height: 100px !important;
   }
-  
+
   .product-rank-badge {
     width: 26px !important;
     text-align: center !important;
@@ -619,7 +664,7 @@ body.dark-mode .markdown-content table tr:hover {
     justify-content: center !important;
     margin-left: -2px !important;
   }
-  
+
   .product-rank-text {
     font-size: 16px !important;
     font-weight: bold !important;
@@ -634,7 +679,7 @@ body.dark-mode .markdown-content table tr:hover {
     width: 70px !important;
     height: 70px !important;
   }
-  
+
   .product-rank-badge {
     width: 20px !important;
     text-align: center !important;
@@ -642,7 +687,7 @@ body.dark-mode .markdown-content table tr:hover {
     justify-content: center !important;
     margin-left: -2px !important;
   }
-  
+
   .product-rank-text {
     font-size: 14px !important;
     font-weight: bold !important;
@@ -653,39 +698,61 @@ body.dark-mode .markdown-content table tr:hover {
 
 /* Product Album Card - Dark Mode Styles */
 @media (prefers-color-scheme: dark) {
+
   /* Thumbnail container background and border */
   div[style*="backgroundColor: rgb(245, 245, 245)"],
   div[style*="backgroundColor:#f5f5f5"] {
     background-color: #2d2d2d !important;
   }
-  
+
   div[style*="border: 1px solid rgb(224, 224, 224)"],
   div[style*="border:1px solid #e0e0e0"] {
     border-color: #444 !important;
   }
-  
+
   /* Product specs text color */
   div[style*="color: rgb(102, 102, 102)"],
   div[style*="color:#666"] {
     color: #aaa !important;
   }
-  
+
   /* Image error container */
   .image-error-container svg {
     color: var(--icon-color) !important;
   }
-  
+
   /* Preview image error placeholder */
   .preview-image-error {
     border: var(--image-border) !important;
   }
-  
+
   .preview-image-error svg {
     color: var(--icon-color) !important;
   }
-  
+
   /* Compact loading state */
   .compact-loading {
     background-color: #2d2d2d !important;
   }
+}
+
+/* 评论区加载动画 */
+.comment-loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 0;
+  gap: 12px;
+  color: var(--reply-text-secondary);
+  font-size: 0.9em;
+}
+
+.comment-loader {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--reply-border);
+  border-top-color: var(--reply-link);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
