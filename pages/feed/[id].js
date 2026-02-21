@@ -7,12 +7,13 @@ import MetaTags from '../../components/feed/MetaTags';
 import FeedContent from '../../components/feed/FeedContent';
 import { ImageLightbox } from '../../components/feed/ImageLightbox';
 import AISummary from '../../components/feed/AISummary';
+import AdBanner from '../../components/feed/AdBanner';
 import { fetchFeedData } from '../../lib/feedLoader';
 import { generateAISummary } from '../../lib/aiSummary';
 import { optimizeFeedData } from '../../lib/feedOptimizer';
 import { styles } from '../../styles/feedStyles';
 
-const FeedPage = ({ feed, error, id, aiSummary }) => {
+const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
     const [isBarVisible, setIsBarVisible] = useState(true);
     const [lightboxImages, setLightboxImages] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -94,6 +95,7 @@ const FeedPage = ({ feed, error, id, aiSummary }) => {
                     isMarkdownEnabled={isMarkdownEnabled}
                 />
             </div>
+            <AdBanner adClient={adClient} adSlot={adSlot} />
             {isBarVisible && id && (
                 <div style={styles.floatingBarContainer}>
                     <div style={styles.floatingBar}>
@@ -156,7 +158,9 @@ export async function getServerSideProps(context) {
             feed: optimizedFeed,
             error: data.props.error,
             id,
-            aiSummary
+            aiSummary,
+            adClient: process.env.ADSENSE_PUBLISHER_ID ?? null,
+            adSlot: process.env.ADSENSE_AD_SLOT ?? null,
         }
     };
 }
