@@ -619,6 +619,65 @@ body.dark-mode .markdown-content table tr:hover {
   }
 }
 
+/* Section Divider Container */
+.section-divider-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 25px 0 10px 0;
+  width: 100%;
+}
+
+.section-divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(40, 167, 69, 0.4));
+  margin-right: 15px;
+}
+
+.section-divider-line-right {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to left, transparent, rgba(40, 167, 69, 0.4));
+  margin-left: 15px;
+}
+
+/* Base Badge */
+.section-divider-badge {
+  display: flex;
+  align-items: center;
+  padding: 8px 18px;
+  background-color: rgba(40, 167, 69, 0.1);
+  border-radius: 20px;
+  color: #28a745;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: background-color 0.3s ease;
+}
+
+.section-divider-badge .divider-icon {
+  margin-right: 6px;
+  display: flex;
+  align-items: center;
+  opacity: 0.9;
+}
+
+@media (prefers-color-scheme: dark) {
+  .section-divider-line {
+    background: linear-gradient(to right, transparent, rgba(61, 213, 109, 0.2));
+  }
+
+  .section-divider-line-right {
+    background: linear-gradient(to left, transparent, rgba(61, 213, 109, 0.2));
+  }
+
+  .section-divider-badge {
+    background-color: rgba(61, 213, 109, 0.15);
+    color: #3dd56d;
+  }
+}
+
 /* Lazy image loading placeholder */
 .lazy-image-loading {
   position: absolute;
