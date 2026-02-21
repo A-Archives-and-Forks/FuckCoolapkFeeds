@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import Script from 'next/script';
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -12,19 +11,7 @@ function MyApp({ Component, pageProps }) {
     }
   }, [isIVPage]);
 
-  return (
-    <>
-      {!isIVPage && process.env.NEXT_PUBLIC_ADSENSE_URL && (
-        <Script
-          async
-          src={process.env.NEXT_PUBLIC_ADSENSE_URL}
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-      )}
-      <Component {...pageProps} />
-    </>
-  );
+  return <Component {...pageProps} />;
 }
 
 export default MyApp;
