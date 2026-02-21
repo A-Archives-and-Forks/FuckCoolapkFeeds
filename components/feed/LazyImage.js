@@ -54,25 +54,25 @@ export const LazyImage = ({ src, alt, style, onClick, enableLongImageCollapse = 
             if (img.naturalWidth > 0 && img.naturalHeight > 0) {
                 const width = img.naturalWidth;
                 const height = img.naturalHeight;
-                
+
                 setImageSize({ width, height });
                 setDimensionsKnown(true);
-                
+
                 // 判断是否为长图（仅在启用长图折叠时）
                 if (enableLongImageCollapse && height / width > LONG_IMAGE_RATIO) {
                     setIsLongImage(true);
-                    
+
                     // 立即获取图片显示宽度
                     if (img.offsetWidth > 0) {
                         setImageDisplayWidth(`${img.offsetWidth}px`);
                     }
                 }
-                
+
                 // 清除轮询
                 if (pollInterval) {
                     clearInterval(pollInterval);
                 }
-                
+
                 return true;
             }
             return false;
@@ -93,10 +93,28 @@ export const LazyImage = ({ src, alt, style, onClick, enableLongImageCollapse = 
         };
     }, [imageSrc, enableLongImageCollapse]);
 
+    // 使用 ResizeObserver 实时追踪实际渲染出的图片宽度 (解决由于 maxHeight 更新导致的长图阴影宽度不匹配问题)
+    useEffect(() => {
+        if (!imageRef.current) return;
+
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                if (entry.target.offsetWidth > 0) {
+                    setImageDisplayWidth(`${entry.target.offsetWidth}px`);
+                }
+            }
+        });
+
+        resizeObserver.observe(imageRef.current);
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, [loaded]);
+
     const handleImageLoad = (e) => {
         setLoaded(true);
         setError(false);
-        
+
         if (enableLongImageCollapse) {
             const img = e.target;
 
@@ -223,7 +241,7 @@ export const LazyImage = ({ src, alt, style, onClick, enableLongImageCollapse = 
                         className="preview-image-error"
                     >
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--icon-color)' }}>
-                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
                         </svg>
                     </div>
                 ) : (
@@ -284,6 +302,7 @@ export const LazyImage = ({ src, alt, style, onClick, enableLongImageCollapse = 
                     alt={alt}
                     style={{
                         ...style,
+                        ...(isLongImage ? { maxHeight: 'none' } : {}),
                         opacity: loaded ? 1 : 0,
                         transition: 'opacity 0.3s',
                         display: error ? 'none' : 'block',
@@ -308,7 +327,7 @@ export const LazyImage = ({ src, alt, style, onClick, enableLongImageCollapse = 
                         className="image-error-container"
                     >
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--icon-color)' }}>
-                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
                         </svg>
                     </div>
                 )}
