@@ -30,14 +30,8 @@ export default function AdBanner({ adClient, adSlot }) {
         });
         observer.observe(ins, { attributes: true, attributeFilter: ['data-ad-status'] });
 
-        // Fallback: hide if the ins element has no height after 3s (likely ad-blocked)
-        const timer = setTimeout(() => {
-            if (ins.offsetHeight === 0) setHidden(true);
-        }, 3000);
-
         return () => {
             observer.disconnect();
-            clearTimeout(timer);
         };
     }, [adClient, adSlot]);
 
