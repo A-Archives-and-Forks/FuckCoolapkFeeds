@@ -19,23 +19,23 @@ export default function AdBanner({ adClient, adSlot }) {
             // Ignore adsbygoogle errors in dev or ad-blocked environments
         }
 
-        const ins = insRef.current;
-        if (!ins) return;
+        // const ins = insRef.current;
+        // if (!ins) return;
 
-        // Watch for Google's data-ad-status attribute.
-        // Google sets it to "unfilled" when there is no ad to show.
-        const observer = new MutationObserver(() => {
-            const status = ins.getAttribute('data-ad-status');
-            if (status === 'unfilled') setHidden(true);
-        });
-        observer.observe(ins, { attributes: true, attributeFilter: ['data-ad-status'] });
+        // // Watch for Google's data-ad-status attribute.
+        // // Google sets it to "unfilled" when there is no ad to show.
+        // const observer = new MutationObserver(() => {
+        //     const status = ins.getAttribute('data-ad-status');
+        //     if (status === 'unfilled') setHidden(true);
+        // });
+        // observer.observe(ins, { attributes: true, attributeFilter: ['data-ad-status'] });
 
-        return () => {
-            observer.disconnect();
-        };
+        // return () => {
+        //     observer.disconnect();
+        // };
     }, [adClient, adSlot]);
 
-    if (!adClient || !adSlot || hidden) return null;
+    if (!adClient || !adSlot) return null;
 
     return (
         <>

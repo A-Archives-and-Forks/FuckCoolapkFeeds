@@ -146,8 +146,6 @@ const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
             </div>
             {feed && (
                 <>
-                    <AdBanner adClient={adClient} adSlot={adSlot} />
-
                     <div className="section-divider-wrapper">
                         <div className="section-divider-line"></div>
                         <div className="section-divider-badge">
@@ -185,6 +183,8 @@ const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
                             </>
                         )}
                     </div>
+
+                    <AdBanner adClient={adClient} adSlot={adSlot} />
                 </>
             )}
             {isBarVisible && id && (
