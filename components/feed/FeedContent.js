@@ -6,7 +6,7 @@ import ProductAlbumCard from './ProductAlbumCard';
 
 const FeedContent = ({ feed, isTelegram, isPC, onImageClick, md, processHtmlLinks, styles, isMarkdownEnabled, imageUrls = [] }) => {
     if (!feed) {
-        return <div style={styles.centered}>No feed data found.</div>;
+        return <div style={styles.centered}>你查看的内容不存在或已被删除</div>;
     }
 
     const renderArticleContent = (messageRaw) => {

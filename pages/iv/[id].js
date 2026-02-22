@@ -45,7 +45,7 @@ const InstantViewPage = ({ feed, error, id, isMarkdownEnabled }) => {
                 {sortedLevels.map((level) => {
                     const items = groupedByLevel[level];
                     const label = levelLabels[level];
-                    
+
                     return (
                         <div key={level}>
                             {/* Only show heading if label exists */}
@@ -64,7 +64,7 @@ const InstantViewPage = ({ feed, error, id, isMarkdownEnabled }) => {
 
     const renderFeedContent = () => {
         if (!feed) {
-            return <div className="iv-centered">No feed data found.</div>;
+            return <div className="iv-centered">你查看的内容不存在或已被删除</div>;
         }
 
         let messageContent;
@@ -74,7 +74,7 @@ const InstantViewPage = ({ feed, error, id, isMarkdownEnabled }) => {
                 messageContent = messageParts.map((part, index) => {
                     if (part.type === 'text') {
                         const formattedMessage = part.message.replace(/\\n/g, '\n');
-                        
+
                         if (isMarkdownEnabled) {
                             return (
                                 <div
@@ -130,7 +130,7 @@ const InstantViewPage = ({ feed, error, id, isMarkdownEnabled }) => {
                 );
             }
         }
-        
+
         return (
             <>
                 {messageContent}
@@ -149,9 +149,9 @@ const InstantViewPage = ({ feed, error, id, isMarkdownEnabled }) => {
         return (
             <div className="iv-container">
                 <Head>
-                    <title>{error ? 'Error' : 'Not Found'}</title>
+                    <title>出错了</title>
                 </Head>
-                <div className="iv-centered">{error ? `Error: ${error}` : 'No feed data found.'}</div>
+                <div className="iv-centered">{error ? `Error: ${error}` : '你查看的内容不存在或已被删除'}</div>
             </div>
         );
     }
@@ -159,7 +159,8 @@ const InstantViewPage = ({ feed, error, id, isMarkdownEnabled }) => {
     return (
         <>
             <Head>
-                <style dangerouslySetInnerHTML={{ __html: `
+                <style dangerouslySetInnerHTML={{
+                    __html: `
                     /* Highlight.js Light Theme */
                     @media (prefers-color-scheme: light) {
                         pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#383a42;background:#fafafa}.hljs-comment,.hljs-quote{color:#a0a1a7;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#a626a4}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e45649}.hljs-literal{color:#0184bb}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#50a14f}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#986801}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#4078f2}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#c18401}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
@@ -276,6 +277,7 @@ export async function getServerSideProps(context) {
             'Cache-Control',
             'public, max-age=3600, s-maxage=86400, stale-while-revalidate=3600');
     } else {
+        res.statusCode = 404;
         res.setHeader(
             'Cache-Control',
             'public, max-age=60, s-maxage=60, stale-while-revalidate=0'

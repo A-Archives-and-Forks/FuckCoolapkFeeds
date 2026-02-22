@@ -144,45 +144,49 @@ const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
                     isMarkdownEnabled={isMarkdownEnabled}
                 />
             </div>
-            <AdBanner adClient={adClient} adSlot={adSlot} />
+            {feed && (
+                <>
+                    <AdBanner adClient={adClient} adSlot={adSlot} />
 
-            <div className="section-divider-wrapper">
-                <div className="section-divider-line"></div>
-                <div className="section-divider-badge">
-                    <span className="divider-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                    </span>
-                    热门评论
-                </div>
-                <div className="section-divider-line-right"></div>
-            </div>
+                    <div className="section-divider-wrapper">
+                        <div className="section-divider-line"></div>
+                        <div className="section-divider-badge">
+                            <span className="divider-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </span>
+                            热门评论
+                        </div>
+                        <div className="section-divider-line-right"></div>
+                    </div>
 
-            <div ref={replyRef} style={replyContainerStyle}>
-                {replyVisible && (
-                    <>
-                        {isReplyLoading && (
-                            <div className="comment-loader-container">
-                                <div className="comment-loader"></div>
-                                <span>加载热门评论中...</span>
-                            </div>
+                    <div ref={replyRef} style={replyContainerStyle}>
+                        {replyVisible && (
+                            <>
+                                {isReplyLoading && (
+                                    <div className="comment-loader-container">
+                                        <div className="comment-loader"></div>
+                                        <span>加载热门评论中...</span>
+                                    </div>
+                                )}
+                                <iframe
+                                    ref={iframeRef}
+                                    src={`/reply/${id}`}
+                                    style={{ ...replyIframeStyle, display: isReplyLoading ? 'none' : 'block' }}
+                                    scrolling="no"
+                                    frameBorder="0"
+                                    title="热门评论"
+                                    onLoad={() => {
+                                        // Sync theme on first load
+                                        syncThemeToIframe();
+                                    }}
+                                />
+                            </>
                         )}
-                        <iframe
-                            ref={iframeRef}
-                            src={`/reply/${id}`}
-                            style={{ ...replyIframeStyle, display: isReplyLoading ? 'none' : 'block' }}
-                            scrolling="no"
-                            frameBorder="0"
-                            title="热门评论"
-                            onLoad={() => {
-                                // Sync theme on first load
-                                syncThemeToIframe();
-                            }}
-                        />
-                    </>
-                )}
-            </div>
+                    </div>
+                </>
+            )}
             {isBarVisible && id && (
                 <div style={styles.floatingBarContainer}>
                     <div style={styles.floatingBar}>
@@ -247,11 +251,11 @@ export async function getServerSideProps(context) {
             'Cache-Control',
             'public, max-age=3600, s-maxage=604800, stale-while-revalidate=86400');
     } else {
+        res.statusCode = 404;
         res.setHeader(
             'Cache-Control',
             'public, max-age=60, s-maxage=60, stale-while-revalidate=0'
         );
-
     }
 
     return {
