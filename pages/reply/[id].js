@@ -46,7 +46,7 @@ function processContent(text) {
 function renderPicArr(picArr, style) {
   if (!picArr || picArr.length === 0) return '';
   const imgs = picArr.map((pic, idx) =>
-    `<img src="${escapeHtml(proxyImage(pic))}" alt="comment pic" style="${style}" data-pics="${escapeHtml(JSON.stringify(picArr.map(p => proxyImage(p))))}" data-idx="${idx}" class="reply-img" />`
+    `<img src="${escapeHtml(proxyImage(pic))}" alt="comment pic" loading="lazy" style="${style}" data-pics="${escapeHtml(JSON.stringify(picArr.map(p => proxyImage(p))))}" data-idx="${idx}" class="reply-img" />`
   ).join('');
   return imgs;
 }
@@ -54,7 +54,7 @@ function renderPicArr(picArr, style) {
 function renderReplyRow(r) {
   const isImgOnly = r.message === '[图片]' && (r.picArr?.length || r.pic);
   const msgHtml = isImgOnly ? '' : processContent(r.message);
-  const picsHtml = renderPicArr(r.picArr, 'width:80px;height:80px;border-radius:6px;object-fit:cover;border:var(--imgborder);cursor:pointer;display:block');
+  const picsHtml = renderPicArr(r.picArr, 'width:100%;aspect-ratio:1;border-radius:4px;object-fit:cover;box-shadow:0 2px 4px rgba(0,0,0,0.1);cursor:pointer;display:block');
   return `
     <div style="display:flex;gap:8px;align-items:flex-start">
       <div style="display:flex;flex-direction:column;gap:4px;font-size:0.92em;line-height:1.6;word-break:break-word;color:var(--c1)">
@@ -62,7 +62,7 @@ function renderReplyRow(r) {
           <span style="font-weight:600;color:var(--link)">${escapeHtml(r.username)}</span>${r.rusername ? `<span style="color:var(--c3)"> 回复 <span style="color:var(--link)">${escapeHtml(r.rusername)}</span></span>` : ''}
           <span style="color:var(--rowmsg)">：${msgHtml}</span>
         </div>
-        ${picsHtml ? `<div style="display:flex;flex-wrap:wrap;gap:4px">${picsHtml}</div>` : ''}
+        ${picsHtml ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(60px,30%),1fr));gap:8px">${picsHtml}</div>` : ''}
         <div style="font-size:0.82em;color:var(--c3);line-height:1.2">${formatDate(r.dateline)}</div>
       </div>
     </div>`;
@@ -71,7 +71,7 @@ function renderReplyRow(r) {
 function renderCard(reply, isLast) {
   const isImgOnly = reply.message === '[图片]' && (reply.picArr?.length || reply.pic);
   const msgHtml = isImgOnly ? '' : processContent(reply.message);
-  const picsHtml = renderPicArr(reply.picArr, 'width:100px;height:100px;border-radius:8px;object-fit:cover;border:var(--imgborder);cursor:pointer');
+  const picsHtml = renderPicArr(reply.picArr, 'width:100%;aspect-ratio:1;border-radius:4px;object-fit:cover;box-shadow:0 2px 4px rgba(0,0,0,0.1);cursor:pointer');
   const nestedRowsHtml = (reply.replyRows && reply.replyRows.length > 0)
     ? `${reply.replyRows.map(r => renderReplyRow(r)).join('')}
        ${reply.replyRowsMore > 0 ? `<div style="font-size:0.86em;color:var(--link);padding-top:2px">还有 ${reply.replyRowsMore} 条回复…</div>` : ''}`
@@ -80,7 +80,7 @@ function renderCard(reply, isLast) {
   return `
     <div style="padding:12px 0;${isLast ? '' : 'border-bottom:1px solid var(--border)'}">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-        <img src="${escapeHtml(proxyImage(reply.userAvatar))}" alt="${escapeHtml(reply.username)}" style="width:36px;height:36px;border-radius:50%;flex-shrink:0" />
+        <img src="${escapeHtml(proxyImage(reply.userAvatar))}" alt="${escapeHtml(reply.username)}" loading="lazy" style="width:36px;height:36px;border-radius:50%;flex-shrink:0" />
         <div style="display:flex;flex-direction:column;flex:1;gap:2px">
           <span style="font-weight:600;font-size:0.96em;display:flex;align-items:center;gap:6px">
             ${escapeHtml(reply.username)}
@@ -101,7 +101,7 @@ function renderCard(reply, isLast) {
       </div>
       <div style="margin-left:46px;display:flex;flex-direction:column;gap:10px">
         ${msgHtml ? `<div style="line-height:1.65;font-size:1em;word-break:break-word">${msgHtml}</div>` : ''}
-        ${picsHtml ? `<div style="display:flex;flex-wrap:wrap;gap:8px">${picsHtml}</div>` : ''}
+        ${picsHtml ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(80px,30%),1fr));gap:8px">${picsHtml}</div>` : ''}
         ${nestedRowsHtml ? `<div style="background:var(--nestbg);border-radius:6px;padding:8px 12px;display:flex;flex-direction:column;gap:8px">${nestedRowsHtml}</div>` : ''}
       </div>
     </div>`;

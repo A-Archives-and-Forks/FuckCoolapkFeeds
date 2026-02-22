@@ -54,7 +54,7 @@ const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
                     observer.disconnect();
                 }
             },
-            { rootMargin: '200px' }
+            { rootMargin: '100px' }
         );
         observer.observe(replyRef.current);
         return () => observer.disconnect();
