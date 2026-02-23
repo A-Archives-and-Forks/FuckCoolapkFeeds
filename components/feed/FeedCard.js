@@ -150,7 +150,15 @@ export const FeedCard = ({ feed }) => {
             {/* Footer */}
             <div className="hl-footer">
                 {feed.ttitle ? (
-                    <span className="hl-topic-tag">
+                    <span
+                        className="hl-topic-tag"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const cleanTag = (feed.ttitle || '').replace(/\s+/g, '');
+                            window.top.location.href = `/t/${encodeURIComponent(cleanTag)}`;
+                        }}
+                    >
                         <span className="hl-topic-icon">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                 <line x1="8" y1="6" x2="21" y2="6"></line>
@@ -453,6 +461,13 @@ export const FeedCardStyles = `
         font-size: 13px;
         font-weight: 500;
         min-height: 24px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .hl-topic-tag:hover {
+        background: #e4e6e9;
+        color: var(--link);
     }
 
     .hl-topic-icon {
@@ -480,6 +495,10 @@ export const FeedCardStyles = `
         .hl-topic-tag {
             background: rgba(255, 255, 255, 0.03);
             color: #888;
+        }
+        .hl-topic-tag:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--link);
         }
     }
 
