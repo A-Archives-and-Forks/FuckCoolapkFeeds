@@ -351,14 +351,23 @@ export const styles = `
     background: #fff;
   }
 
+  .hl-iframe-container {
+    position: relative;
+    width: 100%;
+    transition: min-height 0.3s ease;
+  }
+
   .hl-loading {
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    padding: 32px 0;
     color: #999;
     font-size: 13px;
+    z-index: 1;
+    pointer-events: none;
   }
 
   .hl-spinner {
@@ -374,7 +383,6 @@ export const styles = `
     width: 100%;
     border: none;
     display: block;
-    min-height: 400px;
     overflow: hidden;
   }
 

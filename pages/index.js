@@ -155,7 +155,7 @@ const MAX_HL_PAGES = 3;
 
 function HeadlinesSection() {
   const [pages, setPages] = useState([1]);
-  const [iframeHeights, setIframeHeights] = useState({ 1: 600 });
+  const [iframeHeights, setIframeHeights] = useState({ 1: 100 });
   const [loadingPages, setLoadingPages] = useState({ 1: true });
   const loaderRef = useRef(null);
 
@@ -207,7 +207,7 @@ function HeadlinesSection() {
       </div>
 
       {pages.map(p => (
-        <div key={p} style={{ position: 'relative' }}>
+        <div key={p} className="hl-iframe-container" style={{ minHeight: (iframeHeights[p] || 100) + 'px' }}>
           {loadingPages[p] && (
             <div className="hl-loading">
               <div className="hl-spinner" />
@@ -217,7 +217,11 @@ function HeadlinesSection() {
           <iframe
             src={`/headlines/${p}`}
             className="hl-iframe"
-            style={{ height: (iframeHeights[p] || 600) + 'px', display: loadingPages[p] ? 'none' : 'block' }}
+            style={{
+              height: (iframeHeights[p] || 100) + 'px',
+              opacity: loadingPages[p] ? 0 : 1,
+              transition: 'opacity 0.3s ease'
+            }}
             scrolling="no"
             frameBorder="0"
             title={`今日头条 - 第${p}页`}
