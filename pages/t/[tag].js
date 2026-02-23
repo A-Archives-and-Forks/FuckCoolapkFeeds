@@ -11,6 +11,8 @@ export default function TagFeedContainer() {
     const [pages, setPages] = useState([1]);
     const [iframeHeights, setIframeHeights] = useState({ 1: 100 });
     const [loadingPages, setLoadingPages] = useState({ 1: true });
+    const [hasMore, setHasMore] = useState(true);
+    const [isTagEmpty, setIsTagEmpty] = useState(false);
     const loaderRef = useRef(null);
 
     useEffect(() => {
@@ -19,6 +21,12 @@ export default function TagFeedContainer() {
                 const page = e.data.page || 1;
                 setIframeHeights(prev => ({ ...prev, [page]: e.data.height }));
                 setLoadingPages(prev => ({ ...prev, [page]: false }));
+
+                // If the first page is empty, don't load more and show empty message
+                if (page === 1 && e.data.isEmpty) {
+                    setHasMore(false);
+                    setIsTagEmpty(true);
+                }
             }
         };
         window.addEventListener('message', onMessage);
@@ -30,7 +38,7 @@ export default function TagFeedContainer() {
 
         const observer = new IntersectionObserver((entries) => {
             const target = entries[0];
-            if (target.isIntersecting) {
+            if (target.isIntersecting && hasMore) {
                 setPages(prevPages => {
                     const currentMaxPage = Math.max(...prevPages);
                     if (currentMaxPage < MAX_TAG_PAGES && !loadingPages[currentMaxPage]) {
@@ -83,30 +91,34 @@ export default function TagFeedContainer() {
                         </div>
                     </div>
 
-                    {pages.map(p => (
-                        <div key={p} className="hl-iframe-container" style={{ minHeight: (iframeHeights[p] || 100) + 'px' }}>
-                            {loadingPages[p] && (
-                                <div className="hl-loading">
-                                    <div className="hl-spinner" />
-                                    <span>{p === 1 ? '加载话题中...' : '加载更多中...'}</span>
-                                </div>
-                            )}
-                            <iframe
-                                src={`/t/${encodeURIComponent(tag)}/${p}`}
-                                className="hl-iframe"
-                                style={{
-                                    height: (iframeHeights[p] || 100) + 'px',
-                                    opacity: loadingPages[p] ? 0 : 1,
-                                    transition: 'opacity 0.3s ease'
-                                }}
-                                scrolling="no"
-                                frameBorder="0"
-                                title={`话题 ${tag} - 第${p}页`}
-                            />
-                        </div>
-                    ))}
-                    <div ref={loaderRef} style={{ height: '10px', width: '100%' }} />
-                    {Math.max(...pages) === MAX_TAG_PAGES && !loadingPages[MAX_TAG_PAGES] && (
+                    {isTagEmpty ? (
+                        <div className="hl-empty-msg">该话题不存在</div>
+                    ) : (
+                        pages.map(p => (
+                            <div key={p} className="hl-iframe-container" style={{ minHeight: (iframeHeights[p] || 100) + 'px' }}>
+                                {loadingPages[p] && (
+                                    <div className="hl-loading">
+                                        <div className="hl-spinner" />
+                                        <span>{p === 1 ? '加载话题中...' : '加载更多中...'}</span>
+                                    </div>
+                                )}
+                                <iframe
+                                    src={`/t/${encodeURIComponent(tag)}/${p}`}
+                                    className="hl-iframe"
+                                    style={{
+                                        height: (iframeHeights[p] || 100) + 'px',
+                                        opacity: loadingPages[p] ? 0 : 1,
+                                        transition: 'opacity 0.3s ease'
+                                    }}
+                                    scrolling="no"
+                                    frameBorder="0"
+                                    title={`话题 ${tag} - 第${p}页`}
+                                />
+                            </div>
+                        ))
+                    )}
+                    {!isTagEmpty && <div ref={loaderRef} style={{ height: '10px', width: '100%' }} />}
+                    {!isTagEmpty && Math.max(...pages) === MAX_TAG_PAGES && !loadingPages[MAX_TAG_PAGES] && (
                         <div className="hl-end-msg">没有更多内容了</div>
                     )}
                 </div>
@@ -177,6 +189,14 @@ export default function TagFeedContainer() {
                     font-weight: 700;
                     color: #111;
                 }
+                
+                .hl-empty-msg {
+                    text-align: center;
+                    padding: 48px 16px;
+                    color: #999;
+                    font-size: 15px;
+                    background: #fff;
+                }
 
                 @media (prefers-color-scheme: dark) {
                     .tag-header {
@@ -198,6 +218,10 @@ export default function TagFeedContainer() {
                     }
                     .hl-section-title {
                         color: #e8e8e8;
+                    }
+                    .hl-empty-msg {
+                        background: #1a1a1a;
+                        color: #777;
                     }
                 }
             `}</style>

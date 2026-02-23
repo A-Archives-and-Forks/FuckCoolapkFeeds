@@ -6,20 +6,21 @@ import { FeedCard, FeedCardStyles } from '../../../components/feed/FeedCard';
 const MAX_PAGES = 5;
 
 
-function reportHeight() {
+function reportHeight(isEmpty = false) {
     if (typeof window === 'undefined') return;
     const height = document.documentElement.scrollHeight;
     const match = window.location.pathname.match(/\/t\/(.+)\/(\d+)/);
     const page = match ? parseInt(match[2]) : 1;
     if (window.parent !== window) {
-        window.parent.postMessage({ type: 'tag-height', height, page }, '*');
+        window.parent.postMessage({ type: 'tag-height', height, page, isEmpty }, '*');
     }
 }
 
 const TagFeedPage = ({ feeds, error, currentPage, totalPages, tag }) => {
     useEffect(() => {
-        reportHeight();
-        const ro = new ResizeObserver(() => reportHeight());
+        const isEmpty = feeds.length === 0;
+        reportHeight(isEmpty);
+        const ro = new ResizeObserver(() => reportHeight(isEmpty));
         ro.observe(document.body);
         return () => ro.disconnect();
     }, [feeds]);

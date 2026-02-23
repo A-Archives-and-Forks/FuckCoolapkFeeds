@@ -4,18 +4,18 @@ export function proxy(request) {
   const { pathname, search } = request.nextUrl;
 
   const pathMatch = pathname.match(/^\/(feed|picture|iv)\/([^/]+)$/);
-  
+
   if (pathMatch) {
     const [, routeType, id] = pathMatch;
     const idAsNumber = parseInt(id, 10);
-    
+
     if (isNaN(idAsNumber) || idAsNumber.toString() !== id.replace(/^0+/, '')) {
       const url = request.nextUrl.clone();
       url.pathname = '/';
       url.search = '';
       return NextResponse.redirect(url, 301);
     }
-    
+
     let needsRedirect = false;
     let normalizedId = id;
 
@@ -33,9 +33,16 @@ export function proxy(request) {
       const url = request.nextUrl.clone();
       url.pathname = `/${routeType}/${normalizedId}`;
       url.search = '';
-      
+
       return NextResponse.redirect(url, 301);
     }
+  }
+
+  const otherPagesMatch = pathname === '/' || pathname.match(/^\/(headlines|t|reply)\/.*$/);
+  if (otherPagesMatch && search) {
+    const url = request.nextUrl.clone();
+    url.search = '';
+    return NextResponse.redirect(url, 301);
   }
 
   return NextResponse.next();
@@ -46,5 +53,8 @@ export const config = {
     '/feed/:id*',
     '/picture/:id*',
     '/iv/:id*',
+    '/headlines/:page*',
+    '/t/:tag*',
+    '/reply/:id*',
   ],
 };
