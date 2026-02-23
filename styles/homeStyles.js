@@ -4,21 +4,20 @@ export const styles = `
     padding: 0 1rem;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   .main {
-    padding: 2rem 0;
+    padding: 2rem 0 3rem;
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
     max-width: 800px;
-    margin-top: -5vh;
+    padding-top: max(2rem, 10vh);
   }
 
   .title {
@@ -313,6 +312,98 @@ export const styles = `
       color: #3dd56d;
       background-color: rgba(61, 213, 109, 0.1);
       text-decoration: none;
+    }
+  }
+
+  /* Headlines section embedded in home page */
+  .hl-section {
+    width: 100%;
+    margin-top: 2rem;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e9ecef;
+  }
+
+  .hl-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid #e9ecef;
+    background: #fff;
+  }
+
+  .hl-section-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #28a745;
+    letter-spacing: 0.3px;
+  }
+
+  .hl-end-msg {
+    text-align: center;
+    padding: 24px 0;
+    color: #999;
+    font-size: 13px;
+    background: #fff;
+  }
+
+  .hl-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 32px 0;
+    color: #999;
+    font-size: 13px;
+  }
+
+  .hl-spinner {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #e9ecef;
+    border-top-color: #28a745;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .hl-iframe {
+    width: 100%;
+    border: none;
+    display: block;
+    min-height: 400px;
+    overflow: hidden;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .hl-section {
+      border-color: #2a2a2a;
+    }
+
+    .hl-section-header {
+      background: #1e1e1e;
+      border-bottom-color: #2a2a2a;
+    }
+
+    .hl-end-msg {
+      background: #1a1a1a;
+      color: #777;
+    }
+
+    .hl-loading {
+      color: #666;
+    }
+
+    .hl-spinner {
+      border-color: #333;
+      border-top-color: #3dd56d;
     }
   }
 `;

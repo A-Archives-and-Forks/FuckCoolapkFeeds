@@ -120,43 +120,6 @@ input[type="reset"] {
   }
 }
 
-body.dark-mode {
-  background-color: #1a1a1a;
-  color: #e0e0e0;
-  --ai-summary-bg: #222;
-  --ai-summary-border: #333;
-  --ai-summary-header-color: #aaa;
-  --ai-summary-content-color: #e0e0e0;
-  --ai-summary-disclaimer-color: #888;
-  --ai-summary-separator: #333;
-
-  /* Reply variables for manual dark mode class */
-  --reply-bg: #1a1a1a;
-  --reply-text: #e0e0e0;
-  --reply-text-secondary: #888888;
-  --reply-border: #333333;
-  --reply-nested-bg: #252525;
-  --reply-link: #3dd56d;
-  --reply-heading: #e0e0e0;
-  --reply-row-to: #666666;
-  --reply-row-msg: #cccccc;
-}
-
-body.light-mode {
-  background-color: #f9f9f9;
-  color: #333;
-
-  /* Reply variables for manual light mode class */
-  --reply-bg: #f9f9f9;
-  --reply-text: #333333;
-  --reply-text-secondary: #aaaaaa;
-  --reply-border: #f0f0f0;
-  --reply-nested-bg: #f0f0f0;
-  --reply-link: #28a745;
-  --reply-heading: #333333;
-  --reply-row-to: #bbbbbb;
-  --reply-row-msg: #444444;
-}
 
 .switch {
   position: relative;
@@ -255,10 +218,6 @@ input:focus+.slider {
   }
 }
 
-body.dark-mode .markdown-content pre {
-  background-color: #2d2d2d;
-  color: #e6edf3;
-}
 
 .markdown-content code {
   white-space: normal;
@@ -278,10 +237,6 @@ body.dark-mode .markdown-content pre {
   }
 }
 
-body.dark-mode .markdown-content code {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #e6edf3;
-}
 
 .markdown-content pre code {
   /* Reset styles for code inside pre blocks */
@@ -309,9 +264,6 @@ body.dark-mode .markdown-content code {
   }
 }
 
-body.dark-mode .markdown-content pre code.hljs {
-  background-color: transparent !important;
-}
 
 /* Link styles - prevent overflow */
 .markdown-content a {
@@ -331,9 +283,6 @@ body.dark-mode .markdown-content pre code.hljs {
   }
 }
 
-body.dark-mode .markdown-content a {
-  color: #3dd56d;
-}
 
 /* Non-markdown link styles */
 a {
@@ -375,21 +324,6 @@ a:active {
   }
 }
 
-body.dark-mode a {
-  color: #3dd56d;
-}
-
-body.dark-mode a:hover {
-  color: #5ade82;
-}
-
-body.dark-mode a:visited {
-  color: #3dd56d;
-}
-
-body.dark-mode a:active {
-  color: #28a745;
-}
 
 .markdown-content p {
   word-wrap: break-word;
@@ -461,22 +395,6 @@ body.dark-mode a:active {
   }
 }
 
-body.dark-mode .markdown-content table thead {
-  background-color: #2d2d2d;
-}
-
-body.dark-mode .markdown-content table th,
-body.dark-mode .markdown-content table td {
-  border: 1px solid #444;
-}
-
-body.dark-mode .markdown-content table tr:nth-child(even) {
-  background-color: #2d2d2d;
-}
-
-body.dark-mode .markdown-content table tr:hover {
-  background-color: #3d3d3d;
-}
 
 /* Responsive table */
 @media screen and (max-width: 768px) {

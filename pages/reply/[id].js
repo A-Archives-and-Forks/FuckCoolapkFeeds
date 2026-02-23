@@ -129,16 +129,6 @@ function buildHtml(replies) {
   --nestbg:#252525;--link:#3dd56d;--heading:#e0e0e0;--rowmsg:#ccc;
   --imgborder:1px solid #555;
 }}
-body.dark-mode{
-  --bg:#1a1a1a;--c1:#e0e0e0;--c2:#888;--c3:#666;--border:#333;
-  --nestbg:#252525;--link:#3dd56d;--heading:#e0e0e0;--rowmsg:#ccc;
-  --imgborder:1px solid #555;
-}
-body.light-mode{
-  --bg:#f9f9f9;--c1:#333;--c2:#aaa;--c3:#bbb;--border:#f0f0f0;
-  --nestbg:#f0f0f0;--link:#28a745;--heading:#333;--rowmsg:#444;
-  --imgborder:1px solid #ddd;
-}
 html,body{overflow:hidden}
 body{margin:0;padding:0;background:var(--bg);color:var(--c1);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
@@ -161,12 +151,6 @@ ${cardsHtml}
   reportHeight();
   window.addEventListener('load',reportHeight);
   new ResizeObserver(reportHeight).observe(document.body);
-
-  window.addEventListener('message',function(e){
-    if(e.data&&e.data.type==='theme-change'){
-      document.body.className=e.data.isDark?'dark-mode':'light-mode';
-    }
-  });
 
   // Image click: send proxied pic array to parent for lightbox
   document.addEventListener('click',function(e){
@@ -205,9 +189,15 @@ export async function getServerSideProps({ params, req, res }) {
   }
 
   const replies = await fetchHotReplies(id, req);
-  const html = buildHtml(replies);
+  const isError = replies === null;
+  const html = buildHtml(replies || []);
 
-  res.setHeader('Cache-Control', 'private, max-age=3600');
+  if (!isError) {
+    res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=21600, stale-while-revalidate=0');
+  } else {
+    res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60, stale-while-revalidate=0');
+  }
+
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.end(html);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import { styles } from '../styles/homeStyles';
 
@@ -55,12 +55,12 @@ export default function Home() {
       const range = document.createRange();
       range.selectNode(textElement);
       const selection = window.getSelection();
-      
+
       // 移除之前选中内容
       if (selection.rangeCount > 0) {
         selection.removeAllRanges();
       }
-      
+
       selection.addRange(range);
       document.execCommand('copy');
       alert('链接已复制!');
@@ -125,10 +125,16 @@ export default function Home() {
           </div>
         </div>
 
-        <div className={`arrow-down ${outputLink ? 'visible' : ''}`}>↓</div>
-        <div className={`output-container ${outputLink ? 'visible' : ''}`}>
-          <code className="output-link" id="output-link-text">{outputLink || '\u00A0'}</code>
-        </div>
+        {outputLink && (
+          <div className="arrow-down visible">↓</div>
+        )}
+        {outputLink && (
+          <div className="output-container visible">
+            <code className="output-link" id="output-link-text">{outputLink}</code>
+          </div>
+        )}
+
+        <HeadlinesSection />
       </main>
 
       <footer className="footer">
@@ -141,6 +147,87 @@ export default function Home() {
       </footer>
 
       <style jsx>{styles}</style>
+    </div>
+  );
+}
+
+const MAX_HL_PAGES = 3;
+
+function HeadlinesSection() {
+  const [pages, setPages] = useState([1]);
+  const [iframeHeights, setIframeHeights] = useState({ 1: 600 });
+  const [loadingPages, setLoadingPages] = useState({ 1: true });
+  const loaderRef = useRef(null);
+
+  useEffect(() => {
+    const onMessage = (e) => {
+      if (e.data?.type === 'hl-height') {
+        const page = e.data.page || 1;
+        setIframeHeights(prev => ({ ...prev, [page]: e.data.height }));
+        setLoadingPages(prev => ({ ...prev, [page]: false }));
+      }
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      const target = entries[0];
+      if (target.isIntersecting) {
+        setPages(prevPages => {
+          const currentMaxPage = Math.max(...prevPages);
+          if (currentMaxPage < MAX_HL_PAGES && !loadingPages[currentMaxPage]) {
+            const nextPage = currentMaxPage + 1;
+            setLoadingPages(prev => ({ ...prev, [nextPage]: true }));
+            return [...prevPages, nextPage];
+          }
+          return prevPages;
+        });
+      }
+    }, {
+      rootMargin: '100px',
+    });
+
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
+    }
+    return () => observer.disconnect();
+  }, [loadingPages]);
+
+  return (
+    <div className="hl-section">
+      <div className="hl-section-header">
+        <div className="hl-section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+          </svg>
+          今日头条
+        </div>
+      </div>
+
+      {pages.map(p => (
+        <div key={p} style={{ position: 'relative' }}>
+          {loadingPages[p] && (
+            <div className="hl-loading">
+              <div className="hl-spinner" />
+              <span>{p === 1 ? '加载头条中...' : '加载更多中...'}</span>
+            </div>
+          )}
+          <iframe
+            src={`/headlines/${p}`}
+            className="hl-iframe"
+            style={{ height: (iframeHeights[p] || 600) + 'px', display: loadingPages[p] ? 'none' : 'block' }}
+            scrolling="no"
+            frameBorder="0"
+            title={`今日头条 - 第${p}页`}
+          />
+        </div>
+      ))}
+      <div ref={loaderRef} style={{ height: '10px', width: '100%' }} />
+      {Math.max(...pages) === MAX_HL_PAGES && !loadingPages[MAX_HL_PAGES] && (
+        <div className="hl-end-msg">没有更多内容了</div>
+      )}
     </div>
   );
 }

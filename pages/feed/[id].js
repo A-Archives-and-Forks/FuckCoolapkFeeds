@@ -75,21 +75,6 @@ const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
         return () => window.removeEventListener('message', onMessage);
     }, []);
 
-    // Helper to sync theme to iframe
-    const syncThemeToIframe = () => {
-        if (iframeRef.current && iframeRef.current.contentWindow) {
-            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            iframeRef.current.contentWindow.postMessage({ type: 'theme-change', isDark }, '*');
-        }
-    };
-
-    useEffect(() => {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        const handleChange = () => syncThemeToIframe();
-        mediaQuery.addEventListener('change', handleChange);
-        return () => mediaQuery.removeEventListener('change', handleChange);
-    }, []);
-
     const handleImageClick = (images, index) => {
         setLightboxImages(images);
         setCurrentImageIndex(index);
@@ -175,10 +160,6 @@ const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
                                     scrolling="no"
                                     frameBorder="0"
                                     title="热门评论"
-                                    onLoad={() => {
-                                        // Sync theme on first load
-                                        syncThemeToIframe();
-                                    }}
                                 />
                             </>
                         )}
@@ -249,7 +230,7 @@ export async function getServerSideProps(context) {
     if (data.props.feed) {
         res.setHeader(
             'Cache-Control',
-            'public, max-age=3600, s-maxage=604800, stale-while-revalidate=86400');
+            'public, max-age=3600, s-maxage=86400, stale-while-revalidate=3600');
     } else {
         res.statusCode = 404;
         res.setHeader(
