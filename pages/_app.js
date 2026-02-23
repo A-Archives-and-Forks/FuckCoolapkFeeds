@@ -11,6 +11,16 @@ function MyApp({ Component, pageProps }) {
     }
   }, [isIVPage]);
 
+  // Strip URL query parameters globally (except for IV pages which don't run JS anyway)
+  // This helps with cache hit rates and keeps URLs clean for sharing
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.search) {
+      const cleanUrl = window.location.pathname;
+      // Using replaceState to avoid adding to browser history
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+  }, [router.asPath]);
+
   return <Component {...pageProps} />;
 }
 

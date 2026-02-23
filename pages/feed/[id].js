@@ -29,9 +29,6 @@ const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
     const md = getMarkdownRenderer();
 
     useEffect(() => {
-        if (typeof window !== "undefined" && window.location.search) {
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
         const checkIsPC = () => setIsPC(typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches);
         const checkIsAndroid = () => setIsAndroid(typeof window !== "undefined" && /Android/i.test(navigator.userAgent));
         checkIsPC();

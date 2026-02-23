@@ -58,7 +58,7 @@ const MetaTags = ({ feed, isTelegram }) => {
             {!isTelegram && (
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             )}
-            <title>{feed ? (feed.feedType === 'feedArticle' ? feed.message_title : feed.title) : '出错了'}</title>
+            <title>{feed ? `${feed.feedType === 'feedArticle' ? feed.message_title : feed.title} - Coolapk1s` : '出错了 - Coolapk1s'}</title>
             <OgTags feed={feed} />
             {isTelegram && <TelegramInstantViewTags feed={feed} />}
         </Head>

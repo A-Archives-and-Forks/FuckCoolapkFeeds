@@ -149,7 +149,7 @@ const InstantViewPage = ({ feed, error, id, isMarkdownEnabled }) => {
         return (
             <div className="iv-container">
                 <Head>
-                    <title>出错了</title>
+                    <title>出错了 - Coolapk1s</title>
                 </Head>
                 <div className="iv-centered">{error ? `Error: ${error}` : '你查看的内容不存在或已被删除'}</div>
             </div>

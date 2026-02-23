@@ -1,32 +1,27 @@
 import Head from 'next/head';
 import { useEffect } from 'react';
-import { optimizeFeedListData } from '../../lib/feedOptimizer';
-import { FeedCard, FeedCardStyles } from '../../components/feed/FeedCard';
+import { optimizeFeedListData } from '../../../lib/feedOptimizer';
+import { FeedCard, FeedCardStyles } from '../../../components/feed/FeedCard';
 
-const MAX_PAGES = 3;
+const MAX_PAGES = 5;
+
 
 function reportHeight() {
     if (typeof window === 'undefined') return;
     const height = document.documentElement.scrollHeight;
-    const match = window.location.pathname.match(/\/headlines\/(\d+)/);
-    const page = match ? parseInt(match[1]) : 1;
+    const match = window.location.pathname.match(/\/t\/(.+)\/(\d+)/);
+    const page = match ? parseInt(match[2]) : 1;
     if (window.parent !== window) {
-        window.parent.postMessage({ type: 'hl-height', height, page }, '*');
+        window.parent.postMessage({ type: 'tag-height', height, page }, '*');
     }
 }
 
-const HeadlinesPage = ({ feeds, error, currentPage, totalPages }) => {
+const TagFeedPage = ({ feeds, error, currentPage, totalPages, tag }) => {
     useEffect(() => {
-        // Report initial height after render
         reportHeight();
-
-        // Observe DOM size changes and keep height in sync
         const ro = new ResizeObserver(() => reportHeight());
         ro.observe(document.body);
-
-        return () => {
-            ro.disconnect();
-        };
+        return () => ro.disconnect();
     }, [feeds]);
 
     if (error) {
@@ -55,8 +50,8 @@ const HeadlinesPage = ({ feeds, error, currentPage, totalPages }) => {
     );
 };
 
+
 export async function getServerSideProps({ req, res, params }) {
-    // Enforce same-origin: only allow requests from the same host.
     const host = req.headers['x-forwarded-host'] || req.headers.host || '';
     const referer = req.headers['referer'] || req.headers['referrer'] || '';
     let refererHost = '';
@@ -70,7 +65,8 @@ export async function getServerSideProps({ req, res, params }) {
         return { props: {} };
     }
 
-    const page = parseInt(params.page, 10);
+    const { tag, page: pageParam } = params;
+    const page = parseInt(pageParam, 10);
 
     if (isNaN(page) || page < 1 || page > MAX_PAGES) {
         return { notFound: true };
@@ -84,7 +80,7 @@ export async function getServerSideProps({ req, res, params }) {
         const token = process.env.INTERNAL_AUTH_TOKEN || '';
         const headers = token ? { 'X-Internal-Auth': token } : {};
 
-        const apiRes = await fetch(`${baseUrl}/api/headlines?page=${page}`, { headers });
+        const apiRes = await fetch(`${baseUrl}/api/tag?tag=${encodeURIComponent(tag)}&page=${page}`, { headers });
         if (!apiRes.ok) {
             throw new Error(`API returned ${apiRes.status}`);
         }
@@ -96,7 +92,7 @@ export async function getServerSideProps({ req, res, params }) {
 
         res.setHeader(
             'Cache-Control',
-            'public, max-age=3600, s-maxage=7200, stale-while-revalidate=0'
+            'public, max-age=1800, s-maxage=3600, stale-while-revalidate=0'
         );
         res.setHeader('X-Frame-Options', 'SAMEORIGIN');
 
@@ -105,6 +101,7 @@ export async function getServerSideProps({ req, res, params }) {
                 feeds,
                 currentPage: page,
                 totalPages: MAX_PAGES,
+                tag,
                 error: null,
             }
         };
@@ -119,6 +116,7 @@ export async function getServerSideProps({ req, res, params }) {
                 feeds: [],
                 currentPage: page,
                 totalPages: MAX_PAGES,
+                tag,
                 error: err.message,
             }
         };
@@ -147,4 +145,5 @@ const styles = {
     },
 };
 
-export default HeadlinesPage;
+
+export default TagFeedPage;
