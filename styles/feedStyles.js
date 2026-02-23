@@ -87,15 +87,20 @@ export const styles = {
         display: 'flex',
         alignItems: 'center',
         position: 'relative',
-        gap: '10px',
+        gap: '12px',
         minHeight: '50px',
         flexWrap: 'wrap',
+    },
+    userMeta: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        gap: '2px',
     },
     avatar: {
         width: '50px',
         height: '50px',
         borderRadius: '50%',
-        marginRight: '15px',
         flexShrink: 0,
     },
     username: {

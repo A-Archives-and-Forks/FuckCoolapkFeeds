@@ -101,7 +101,7 @@ const FeedPage = ({ feed, error, id, aiSummary, adClient, adSlot }) => {
                     <h1 style={styles.title}>{feed.message_title || feed.title}</h1>
                     <div style={styles.userInfo}>
                         <img src={proxyImage(feed.userAvatar)} alt={feed.username} style={styles.avatar} />
-                        <div>
+                        <div style={styles.userMeta}>
                             <strong style={styles.username}>{feed.username}</strong>
                             <div style={styles.dateline}>{formattedDate}</div>
                         </div>

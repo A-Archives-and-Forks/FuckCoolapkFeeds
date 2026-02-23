@@ -3,33 +3,19 @@ import { useEffect, useState, useRef } from 'react';
 import { proxyImage } from '../../lib/imageProxy';
 import { LazyImage } from '../../components/feed/LazyImage';
 import { optimizeHeadlineData } from '../../lib/feedOptimizer';
+import { processCoolapkEmoji } from '../../lib/emojiProcessor';
+import { formatDate, timeAgo } from '../../lib/dateUtils';
 
 const MAX_PAGES = 3;
 
 function stripHtml(html) {
     if (!html) return '';
-    return html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    // Replace <a> tags with styled spans to keep link text visible/colored
+    const withLinks = html.replace(/<a\b[^>]*>(.*?)<\/a>/g, '<span style="color:var(--link)">$1</span>');
+    // Strip all other HTML tags except the newly created spans
+    return withLinks.replace(/<(?!\/?span\b)[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 }
 
-function formatDate(ts) {
-    if (!ts) return '';
-    return new Date(parseInt(ts) * 1000).toLocaleString('zh-CN', {
-        month: 'numeric',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-}
-
-function timeAgo(ts) {
-    if (!ts) return '';
-    const now = Math.floor(Date.now() / 1000);
-    const diff = now - parseInt(ts);
-    if (diff < 60) return '刚刚';
-    if (diff < 3600) return `${Math.floor(diff / 60)}分钟前`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}小时前`;
-    return formatDate(ts);
-}
 
 function reportHeight() {
     if (typeof window === 'undefined') return;
@@ -102,9 +88,11 @@ const FeedExcerpt = ({ text, hasTitle }) => {
 
     return (
         <div className={`hl-excerpt-container ${hasTitle ? 'with-title' : 'no-title'}`}>
-            <div ref={textRef} className="hl-excerpt-text">
-                {text}
-            </div>
+            <div
+                ref={textRef}
+                className="hl-excerpt-text"
+                dangerouslySetInnerHTML={{ __html: text }}
+            />
             {isTruncated && <div className="hl-excerpt-more-fade" />}
         </div>
     );
@@ -126,6 +114,10 @@ const FeedCard = ({ feed }) => {
 
     // Strip HTML and check if very long to show "查看更多"
     bodyText = stripHtml(bodyText);
+
+    // Process Emojis
+    titleText = processCoolapkEmoji(titleText);
+    bodyText = processCoolapkEmoji(bodyText);
 
     // Photos
     const pics = feed.picArr || (feed.pic ? [feed.pic] : []);
@@ -180,7 +172,12 @@ const FeedCard = ({ feed }) => {
 
             {/* Content */}
             <div className="hl-body">
-                {titleText && <div className="hl-title">{titleText}</div>}
+                {titleText && (
+                    <div
+                        className="hl-title"
+                        dangerouslySetInnerHTML={{ __html: titleText }}
+                    />
+                )}
                 {bodyText && <FeedExcerpt text={bodyText} hasTitle={!!titleText} />}
             </div>
 
@@ -361,6 +358,7 @@ const globalStyles = `
         --hl-title-color: #111;
         --hl-excerpt-color: #444;
         --hl-meta-color: #999;
+        --link: #28a745;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -371,10 +369,8 @@ const globalStyles = `
             --hl-title-color: #e8e8e8;
             --hl-excerpt-color: #a0a0a0;
             --hl-meta-color: #888;
+            --link: #3dd56d;
         }
-    }
-
-        --hl-meta-color: #888;
     }
 
     body {
@@ -637,6 +633,18 @@ const globalStyles = `
             background: rgba(255, 255, 255, 0.03);
             color: #888;
         }
+    }
+
+    .coolapk-emoji {
+        width: 20px !important;
+        height: 20px !important;
+        margin: -2px 1px 0 1px !important;
+        vertical-align: middle;
+    }
+
+    .hl-title .coolapk-emoji {
+        width: 22px !important;
+        height: 22px !important;
     }
 `;
 

@@ -1,15 +1,5 @@
 import { proxyImage } from '../../lib/imageProxy';
-
-// Format a Unix timestamp into a locale-aware date string.
-function formatDate(ts) {
-    return new Date(ts * 1000).toLocaleString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-}
+import { formatDate } from '../../lib/dateUtils';
 
 // A single nested child reply row.
 function ReplyRow({ reply }) {

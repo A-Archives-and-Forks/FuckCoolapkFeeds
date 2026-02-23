@@ -1,6 +1,7 @@
 import { fetchHotReplies } from '../../lib/hotReplyLoader';
 import { proxyImage } from '../../lib/imageProxy';
 import { processCoolapkEmoji } from '../../lib/emojiProcessor';
+import { formatDate } from '../../lib/dateUtils';
 
 // This component is never rendered — response is sent directly in getServerSideProps.
 export default function ReplyPage() {
@@ -20,15 +21,6 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-function formatDate(ts) {
-  return new Date(ts * 1000).toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
 
 function processContent(text) {
   let html = processCoolapkEmoji(text);
