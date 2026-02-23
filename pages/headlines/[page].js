@@ -138,6 +138,7 @@ const FeedCard = ({ feed }) => {
             <div className="hl-header">
                 <div className="hl-avatar-wrap">
                     <LazyImage
+                        compact
                         src={proxyImage(feed.userAvatar)}
                         alt={feed.username}
                         style={{

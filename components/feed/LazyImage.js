@@ -217,7 +217,7 @@ export const LazyImage = ({ src, alt, style, onClick, enableLongImageCollapse = 
                             alignItems: 'center',
                             justifyContent: 'center',
                             backgroundColor: 'var(--image-bg)',
-                            borderRadius: '4px',
+                            borderRadius: style?.borderRadius || '4px',
                         }}
                         className="compact-loading"
                     >
@@ -272,14 +272,17 @@ export const LazyImage = ({ src, alt, style, onClick, enableLongImageCollapse = 
                 width: '100%',
                 height: isLongImage && !isExpanded ? `${COLLAPSED_HEIGHT}px` : '100%',
                 maxHeight: isLongImage && !isExpanded ? `${COLLAPSED_HEIGHT}px` : 'none',
-                minHeight: isLongImage && !isExpanded ? 'auto' : '50px',
+                minHeight: isLongImage && !isExpanded ? 'auto' : (style?.height || '50px'),
+                borderRadius: style?.borderRadius,
+                overflow: style?.borderRadius ? 'hidden' : 'visible'
             }}
         >
             {!loaded && imageSrc && !error && (
                 <div
                     className="lazy-image-loading"
                     style={{
-                        height: isLongImage && !isExpanded ? `${COLLAPSED_HEIGHT}px` : 'auto',
+                        height: isLongImage && !isExpanded ? `${COLLAPSED_HEIGHT}px` : (style?.height || 'auto'),
+                        borderRadius: style?.borderRadius
                     }}
                 >
                     <div className="lazy-image-spinner"></div>

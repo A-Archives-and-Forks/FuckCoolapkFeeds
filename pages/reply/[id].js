@@ -37,6 +37,9 @@ function processContent(text) {
   const viewMorePattern = /<a\s+href="\/feed\/replyList\?id=\d+">查看更多<\/a>/g;
   html = html.replace(viewMorePattern, '<span style="color:var(--c2);font-style:italic;font-size:0.9em">（完整评论请到客户端查看）</span>');
 
+  // Replace <a> tags with styled <span> to keep the green color but remove clickability
+  html = html.replace(/<a\b[^>]*>(.*?)<\/a>/g, '<span style="color:var(--link)">$1</span>');
+
   return html
     .replace(/width:\s*24px/g, 'width:1.2em')
     .replace(/height:\s*24px/g, 'height:1.2em')
