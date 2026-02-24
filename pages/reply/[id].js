@@ -46,15 +46,16 @@ function renderPicArr(picArr, style) {
   return imgs;
 }
 
-function renderReplyRow(r) {
+function renderReplyRow(r, authorUid) {
   const isImgOnly = r.message === '[图片]' && (r.picArr?.length || r.pic);
   const msgHtml = isImgOnly ? '' : processContent(r.message);
   const picsHtml = renderPicArr(r.picArr, 'width:100%;aspect-ratio:1;border-radius:4px;object-fit:cover;box-shadow:0 2px 4px rgba(0,0,0,0.1);cursor:pointer;display:block');
+  const isTargetAuthor = authorUid && r.ruid === authorUid;
   return `
     <div style="display:flex;gap:8px;align-items:flex-start">
       <div style="display:flex;flex-direction:column;gap:4px;font-size:0.92em;line-height:1.6;word-break:break-word;color:var(--c1)">
         <div>
-          <span style="font-weight:600;color:var(--link)">${escapeHtml(r.username)}</span>${r.rusername ? `<span style="color:var(--c3)"> 回复 <span style="color:var(--link)">${escapeHtml(r.rusername)}</span></span>` : ''}
+          <span style="font-weight:600;color:var(--link)">${escapeHtml(r.username)}</span>${r.isFeedAuthor === 1 ? '<span style="font-size:0.68em;padding:1px 6px;border-radius:10px;background:var(--link);color:#fff;margin-left:4px">楼主</span>' : ''}${r.rusername ? `<span style="color:var(--c3)"> 回复 <span style="color:var(--link)">${escapeHtml(r.rusername)}</span>${isTargetAuthor ? '<span style="font-size:0.68em;padding:1px 6px;border-radius:10px;background:var(--link);color:#fff;margin-left:4px">楼主</span>' : ''}</span>` : ''}
           <span style="color:var(--rowmsg)">：${msgHtml}</span>
         </div>
         ${picsHtml ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(60px,30%),1fr));gap:8px">${picsHtml}</div>` : ''}
@@ -67,8 +68,11 @@ function renderCard(reply, isLast) {
   const isImgOnly = reply.message === '[图片]' && (reply.picArr?.length || reply.pic);
   const msgHtml = isImgOnly ? '' : processContent(reply.message);
   const picsHtml = renderPicArr(reply.picArr, 'width:100%;aspect-ratio:1;border-radius:4px;object-fit:cover;box-shadow:0 2px 4px rgba(0,0,0,0.1);cursor:pointer');
+
+  // Use feedUid from the reply object as the author reference
+  const authorUid = reply.feedUid;
   const nestedRowsHtml = (reply.replyRows && reply.replyRows.length > 0)
-    ? `${reply.replyRows.map(r => renderReplyRow(r)).join('')}
+    ? `${reply.replyRows.map(r => renderReplyRow(r, authorUid)).join('')}
        ${reply.replyRowsMore > 0 ? `<div style="font-size:0.86em;color:var(--link);padding-top:2px">还有 ${reply.replyRowsMore} 条回复…</div>` : ''}`
     : '';
 
@@ -79,7 +83,7 @@ function renderCard(reply, isLast) {
         <div style="display:flex;flex-direction:column;flex:1;gap:2px">
           <span style="font-weight:600;font-size:0.96em;display:flex;align-items:center;gap:6px">
             ${escapeHtml(reply.username)}
-            ${reply.isFeedAuthor === 1 ? '<span style="font-size:0.68em;padding:1px 6px;border-radius:10px;background:var(--link);color:#fff">作者</span>' : ''}
+            ${reply.isFeedAuthor === 1 ? '<span style="font-size:0.68em;padding:1px 6px;border-radius:10px;background:var(--link);color:#fff">楼主</span>' : ''}
           </span>
           <span style="font-size:0.82em;color:var(--c2)">${formatDate(reply.dateline)}</span>
         </div>
