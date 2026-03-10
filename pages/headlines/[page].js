@@ -17,6 +17,23 @@ function reportHeight() {
 
 const HeadlinesPage = ({ feeds, error, currentPage, totalPages }) => {
     useEffect(() => {
+        // Frame Guard: Ensure the page is only shown if it's NOT in an iframe OR in a same-origin iframe
+        try {
+            if (window.self !== window.top) {
+                // If we are in an iframe, check if the parent is same-origin
+                // Note: accessing window.top.location might throw if cross-origin
+                const sameOrigin = window.top.location.host === window.location.host;
+                if (!sameOrigin) {
+                    document.body.innerHTML = '';
+                    return;
+                }
+            }
+        } catch (e) {
+            // Cross-origin access to window.top.location throws SecurityError
+            document.body.innerHTML = '';
+            return;
+        }
+
         // Report initial height after render
         reportHeight();
 
@@ -56,20 +73,6 @@ const HeadlinesPage = ({ feeds, error, currentPage, totalPages }) => {
 };
 
 export async function getServerSideProps({ req, res, params }) {
-    // Enforce same-origin: only allow requests from the same host.
-    const host = req.headers['x-forwarded-host'] || req.headers.host || '';
-    const referer = req.headers['referer'] || req.headers['referrer'] || '';
-    let refererHost = '';
-    try { refererHost = new URL(referer).host; } catch (_) { }
-
-    if (refererHost !== host) {
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-        res.statusCode = 403;
-        res.end('<!DOCTYPE html><html><body>403 Forbidden</body></html>');
-        return { props: {} };
-    }
-
     const page = parseInt(params.page, 10);
 
     if (isNaN(page) || page < 1 || page > MAX_PAGES) {

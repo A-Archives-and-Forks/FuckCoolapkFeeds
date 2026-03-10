@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { useEffect } from 'react';
 import ReplyList, { ReplyListStyles } from '../../components/feed/ReplyList';
 import { fetchHotReplies } from '../../lib/hotReplyLoader';
 import { optimizeReplyData } from '../../lib/feedOptimizer';
@@ -60,6 +61,22 @@ p { margin: 0; }
 
 
 const ReplyPage = ({ replies }) => {
+    useEffect(() => {
+        // Frame Guard: Ensure the page is only shown if it's NOT in an iframe OR in a same-origin iframe
+        try {
+            if (window.self !== window.top) {
+                const sameOrigin = window.top.location.host === window.location.host;
+                if (!sameOrigin) {
+                    document.body.innerHTML = '';
+                    return;
+                }
+            }
+        } catch (e) {
+            document.body.innerHTML = '';
+            return;
+        }
+    }, []);
+
     return (
         <>
             <Head>
@@ -75,18 +92,6 @@ const ReplyPage = ({ replies }) => {
 
 export async function getServerSideProps({ params, req, res }) {
     const { id } = params;
-
-    // Enforce same-origin: only allow requests from the same host.
-    const host = req.headers['x-forwarded-host'] || req.headers.host || '';
-    const referer = req.headers['referer'] || req.headers['referrer'] || '';
-    let refererHost = '';
-    try { refererHost = new URL(referer).host; } catch (_) { }
-
-    if (refererHost !== host) {
-        res.statusCode = 403;
-        res.end('403 Forbidden');
-        return { props: {} };
-    }
 
     const replies = await fetchHotReplies(id, req);
     const isError = replies === null;

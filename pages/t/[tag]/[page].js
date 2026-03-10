@@ -18,6 +18,20 @@ function reportHeight(isEmpty = false) {
 
 const TagFeedPage = ({ feeds, error, currentPage, totalPages, tag }) => {
     useEffect(() => {
+        // Frame Guard
+        try {
+            if (window.self !== window.top) {
+                const sameOrigin = window.top.location.host === window.location.host;
+                if (!sameOrigin) {
+                    document.body.innerHTML = '';
+                    return;
+                }
+            }
+        } catch (e) {
+            document.body.innerHTML = '';
+            return;
+        }
+
         const isEmpty = feeds.length === 0;
         reportHeight(isEmpty);
         const ro = new ResizeObserver(() => reportHeight(isEmpty));
@@ -53,19 +67,6 @@ const TagFeedPage = ({ feeds, error, currentPage, totalPages, tag }) => {
 
 
 export async function getServerSideProps({ req, res, params }) {
-    const host = req.headers['x-forwarded-host'] || req.headers.host || '';
-    const referer = req.headers['referer'] || req.headers['referrer'] || '';
-    let refererHost = '';
-    try { refererHost = new URL(referer).host; } catch (_) { }
-
-    if (refererHost !== host) {
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-        res.statusCode = 403;
-        res.end('<!DOCTYPE html><html><body>403 Forbidden</body></html>');
-        return { props: {} };
-    }
-
     const { tag, page: pageParam } = params;
     const page = parseInt(pageParam, 10);
 
