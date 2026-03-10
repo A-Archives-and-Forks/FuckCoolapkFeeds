@@ -76,6 +76,12 @@ export default function Home() {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && outputLink) {
+      handleRedirect();
+    }
+  };
+
   return (
     <div className="container">
       <Head>
@@ -113,14 +119,22 @@ export default function Home() {
             className="input"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="输入酷安分享链接或动态ID"
           />
           <div className="button-group">
-            <button onClick={handleCopy} className="button copy-button" disabled={!outputLink}>
-              复制链接
+            <button onClick={handleCopy} className="button copy-button" title="复制链接" disabled={!outputLink}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
             </button>
-            <button onClick={handleRedirect} className="button redirect-button" disabled={!outputLink}>
-              跳转
+            <button onClick={handleRedirect} className="button redirect-button" title="跳转" disabled={!outputLink}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
             </button>
           </div>
         </div>
@@ -202,7 +216,7 @@ function HeadlinesSection() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
           </svg>
-          今日头条
+          头条榜
         </div>
       </div>
 
@@ -224,7 +238,7 @@ function HeadlinesSection() {
             }}
             scrolling="no"
             frameBorder="0"
-            title={`今日头条 - 第${p}页`}
+            title={`头条榜 - 第${p}页`}
           />
         </div>
       ))}

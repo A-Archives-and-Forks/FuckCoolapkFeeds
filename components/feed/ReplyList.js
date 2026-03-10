@@ -238,6 +238,7 @@ export const ReplyListStyles = `
     border-radius: 10px;
     background: var(--link);
     color: #fff;
+    vertical-align: 0.12em;
 }
 .reply-date {
     font-size: 0.82em;
@@ -317,6 +318,9 @@ export const ReplyListStyles = `
 }
 .reply-row-meta {
     display: inline;
+}
+.reply-row-meta .reply-badge {
+    margin: 0 2px;
 }
 .reply-row-username {
     font-weight: 600;

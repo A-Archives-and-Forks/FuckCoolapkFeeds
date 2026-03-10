@@ -37,70 +37,84 @@ export const styles = `
   .input-section {
     width: 100%;
     display: flex;
-    gap: 1rem;
     margin-bottom: 0;
-    align-items: stretch;
+    position: relative;
+    align-items: center;
   }
 
   .input {
     flex: 1;
-    padding: 1rem 1.5rem;
-    font-size: 1.1rem;
-    border: 2px solid #ddd;
-    border-radius: 8px;
+    padding: 1.1rem 8rem 1.1rem 1.5rem;
+    font-size: 1.05rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 14px;
     outline: none;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    background-color: white;
-    color: #333;
+    transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+    background-color: transparent;
+    color: #1e293b;
+    width: 100%;
   }
 
   .input:focus {
+    background-color: transparent;
     border-color: #28a745;
-    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+    box-shadow: 0 0 0 1px rgba(40, 167, 69, 0.1);
+  }
+
+  .input::placeholder {
+    color: #94a3b8;
   }
 
   .button-group {
+    position: absolute;
+    right: 0.75rem;
     display: flex;
-    gap: 0.75rem;
+    gap: 0.25rem;
+    align-items: center;
+    height: 60%;
+    padding-left: 0.75rem;
+    border-left: 1px solid rgba(0, 0, 0, 0.06);
   }
 
   .button {
-    padding: 1rem 2rem;
+    padding: 0 0.8rem;
     font-size: 1rem;
     font-weight: 500;
     border: none;
-    color: white;
     cursor: pointer;
-    transition: all 0.3s;
-    border-radius: 8px;
+    transition: all 0.2s;
+    border-radius: 6px;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.8rem;
+    height: 100%;
+    background-color: transparent;
   }
 
-
   .copy-button {
-    background-color: #6c757d;
+    color: #6c757d;
   }
 
   .copy-button:hover:not(:disabled) {
-    background-color: #5a6268;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background-color: rgba(108, 117, 125, 0.1);
+    color: #495057;
   }
 
   .redirect-button {
-    background-color: #28a745;
+    color: #28a745;
   }
 
   .redirect-button:hover:not(:disabled) {
-    background-color: #218838;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #218838;
   }
 
   .button:disabled {
-    background-color: #ccc;
+    color: #ccc;
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.5;
   }
 
   .arrow-down {
@@ -113,31 +127,18 @@ export const styles = `
 
   .arrow-down.visible {
     opacity: 1;
-    animation: bounce 2s infinite;
-  }
-
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-      transform: translateY(0);
-    }
-    40% {
-      transform: translateY(-10px);
-    }
-    60% {
-      transform: translateY(-5px);
-    }
   }
 
   .output-container {
     margin-top: 0.5rem;
     text-align: center;
     word-break: break-all;
-    background-color: #f8f9fa;
+    background-color: transparent;
     padding: 1.5rem;
-    border-radius: 8px;
+    border-radius: 14px;
     width: 100%;
-    border: 2px solid #e9ecef;
-    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transition: opacity 0.3s ease;
     box-sizing: border-box;
     overflow-wrap: break-word;
     opacity: 0;
@@ -170,23 +171,51 @@ export const styles = `
 
   @media (prefers-color-scheme: dark) {
     .input {
-      background-color: #2d2d2d;
-      color: #e0e0e0;
-      border-color: #444;
+      background-color: transparent;
+      color: #e2e8f0;
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: none;
     }
 
     .input:focus {
-      border-color: #28a745;
-      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+      background-color: transparent;
+      border-color: #3dd56d;
+      box-shadow: 0 0 0 1px rgba(61, 213, 109, 0.2);
+    }
+
+    .input::placeholder {
+      color: #64748b;
+    }
+
+    .button-group {
+      border-left-color: rgba(255, 255, 255, 0.1);
     }
 
     .output-container {
-      background-color: #2d2d2d;
-      border-color: #444;
+      background-color: transparent;
+      border-color: rgba(255, 255, 255, 0.15);
     }
 
     .output-link {
       color: #ced4da;
+    }
+
+    .copy-button {
+      color: #adb5bd;
+    }
+
+    .copy-button:hover:not(:disabled) {
+      background-color: rgba(173, 181, 189, 0.15);
+      color: #f8f9fa;
+    }
+
+    .redirect-button {
+      color: #3dd56d;
+    }
+
+    .redirect-button:hover:not(:disabled) {
+      background-color: rgba(61, 213, 109, 0.15);
+      color: #8df0a1;
     }
   }
 
@@ -197,27 +226,25 @@ export const styles = `
     }
 
     .input-section {
-      flex-direction: column;
+      flex-direction: row;
       margin-bottom: 0;
     }
 
     .button-group {
-      width: 100%;
-      margin-top: 0.5rem;
-    }
-
-    .button-group .button {
-      flex: 1;
+      width: auto;
+      margin-top: 0;
+      right: 0.4rem;
     }
 
     .input {
       font-size: 1rem;
-      padding: 0.9rem 1.2rem;
+      padding: 0.9rem 7rem 0.9rem 1.2rem;
     }
 
     .button {
       font-size: 0.95rem;
-      padding: 0.9rem 1.5rem;
+      padding: 0 0.6rem;
+      min-width: 2.6rem;
     }
 
     .output-container {
