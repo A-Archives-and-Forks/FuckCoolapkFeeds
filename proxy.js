@@ -11,22 +11,22 @@ export function proxy(request) {
     (/^\/t\/[^\/]+\/\d+$/.test(pathname)); // Matches /t/TagName/1 but NOT /t/TagName
 
   if (isIframeContent) {
-    const referer = request.headers.get('referer');
-    const host = request.headers.get('host');
-    if (referer) {
-      try {
-        const refererUrl = new URL(referer);
-        const requestUrl = request.nextUrl;
-        
-        const isDev = process.env.NODE_ENV === 'development';
-        const isSameHost = refererUrl.host === requestUrl.host;
-
-        if (!isDev && !isSameHost) {
-          return new NextResponse('Forbidden', { status: 403 });
-        }
-      } catch (e) {
-        return new NextResponse('Forbidden', { status: 403 });
+    // Get the current host (respecting proxies like Vercel/CDN)
+    const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || '';
+    const referer = request.headers.get('referer') || '';
+    
+    let refererHost = '';
+    try {
+      if (referer) {
+        refererHost = new URL(referer).host;
       }
+    } catch (e) {
+      // Invalid URL in referer
+    }
+
+    const isDev = process.env.NODE_ENV === 'development';
+    if (!isDev && refererHost !== host) {
+      return new NextResponse('Forbidden', { status: 403 });
     }
   }
 
